@@ -1,0 +1,6 @@
+# Keep credentials and the raw SQL dump out of the browser
+RewriteEngine On
+RewriteRule ^config/ - [F,L]
+<FilesMatch "\.sql$">
+    Require all denied
+</FilesMatch>

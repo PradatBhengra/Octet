@@ -1,0 +1,287 @@
+/* Basic Setup */
+:root {
+    --primary-color: #1a2980;
+    --secondary-color: #26d0ce;
+    --accent-color: #ff6b6b;
+    --text-dark: #333333;
+    --text-light: #777777;
+    --bg-light: #f8f9fa;
+    --white: #ffffff;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth !important;
+}
+
+body {
+    overflow-x: hidden;
+    font-family: var(--font-family);
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+}
+
+a {
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #0d1b5e;
+    text-decoration: none;
+}
+
+/* Sidebar */
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem;
+    -webkit-transition: margin .25s ease-out;
+    -moz-transition: margin .25s ease-out;
+    -o-transition: margin .25s ease-out;
+    transition: margin .25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+}
+
+#sidebar-wrapper .sidebar-heading span {
+    font-weight: 600;
+}
+
+#sidebar-wrapper .list-group {
+    width: 15rem;
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: 0;
+}
+
+/* Accessibility Bar */
+#b-accessibility {
+    color: #555;
+    font-size: 0.9rem;
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.b-acc-goi {
+    border-right: 1px solid #ddd;
+    line-height: 1.2;
+}
+
+.b-acc-ministry {
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+/* Header */
+#b-header {
+    background-color: var(--white);
+}
+
+.b-emblem-image {
+    height: 60px;
+    width: auto;
+}
+
+/* Navigation */
+.globalnav-bg {
+    background: linear-gradient(90deg, var(--primary-color), #2d45b5) !important;
+}
+
+.main-menu li a.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 1rem 1.2rem;
+    position: relative;
+}
+
+.main-menu li a.nav-link:hover,
+.main-menu li a.nav-link.active {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* Carousel */
+.carousel-item {
+    background-color: #333;
+    /* Fallback */
+}
+
+/* Dashboard Cards */
+.b-dbcard {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+}
+
+.hover-elevate:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+}
+
+/* Icons colored in HTML directly via text utility classes */
+
+/* Footer Logos */
+.footer-carousal {
+    background: #fff;
+}
+
+.f-logo img {
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.f-logo:hover img {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+/* Main Footer */
+.footer-bs {
+    background-color: #1a1a1a !important;
+    font-size: 0.95rem;
+}
+
+.footer-bs h4 {
+    color: var(--white);
+    border-bottom: 2px solid var(--secondary-color);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.text-light-50 {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.transition-hover:hover {
+    color: var(--white) !important;
+    padding-left: 5px;
+}
+
+.footer-social img {
+    background: #fff;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.backtotop {
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    background-color: var(--secondary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.backtotop:hover {
+    background-color: var(--primary-color);
+}
+
+/* Modals */
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.modal-content {
+    border: none;
+}
+
+.form-control {
+    padding: 1.2rem 1rem;
+    height: auto;
+    font-size: 1rem;
+    border-radius: 4px;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(38, 208, 206, 0.25);
+    border-color: var(--secondary-color);
+}
+
+.b-btn.submit,
+.b-btn {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    transition: all 0.3s;
+}
+
+.b-btn:hover {
+    background-color: #0d1b5e !important;
+    border-color: #0d1b5e !important;
+    transform: translateY(-2px);
+}
+
+/* Mobile Toggler */
+.b-btn-toggler {
+    border: none;
+    padding: 0.25rem 0.75rem;
+}
+
+/* Breadcrumb */
+ul.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+ul.breadcrumb li a {
+    color: var(--text-light);
+}
+
+ul.breadcrumb li.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Utilities */
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+}
+
+.rounded-lg {
+    border-radius: .8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #b-header .float-left {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+    }
+
+    .b-emblem-image {
+        margin-bottom: 10px;
+    }
+
+    .main-menu {
+        flex-direction: column;
+        align-items: flex-start !important;
+        padding: 10px;
+    }
+
+    .main-menu li {
+        width: 100%;
+    }
+
+    .b-loginbut {
+        margin-left: 0 !important;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .b-loginbut a {
+        display: block;
+        text-align: center;
+    }
+}
