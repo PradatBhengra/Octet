@@ -95,6 +95,7 @@ CREATE TABLE employee (
 -- ---------- workflow ----------
 
 -- action_status_reporting_officer: 0 rejected, 1 approved, 2 pending
+-- assigned_date_time: set when the network admin assigns an IP for the request
 CREATE TABLE ip_request (
     id bigint(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     emp_id bigint(5) NOT NULL,
@@ -107,7 +108,8 @@ CREATE TABLE ip_request (
     query_reporting_officer varchar(200) NOT NULL DEFAULT '',
     ip_purpose varchar(200) NOT NULL,
     reporting_officer_date_time datetime NULL,
-    reporting_officer_ip_address varchar(45) NULL
+    reporting_officer_ip_address varchar(45) NULL,
+    assigned_date_time datetime NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE ip_transaction (

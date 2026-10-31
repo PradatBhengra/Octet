@@ -1,5 +1,5 @@
 -- Run this once against an existing ip_management database.
--- Fixes three columns whose types could not hold the values the app writes.
+-- Brings it up to the current schema in ip_management.sql.
 USE ip_management;
 
 -- Stored a full date and time, but the column was an integer
@@ -30,3 +30,16 @@ CREATE TABLE IF NOT EXISTS login_log (
     login_date_time DATETIME NOT NULL,
     logout_date_time DATETIME NULL
 );
+
+-- Set when the network admin assigns an IP for a request, so assigned requests
+-- leave the assign list. For existing data, mark the request each transaction
+-- points to, plus the earlier approved requests for that same employee and MAC.
+ALTER TABLE ip_request
+  ADD COLUMN assigned_date_time DATETIME NULL;
+
+UPDATE ip_request r
+  JOIN ip_transaction t ON t.emp_id = r.emp_id
+  JOIN ip_request cur ON cur.id = t.ip_request_id AND cur.mac_address = r.mac_address
+   SET r.assigned_date_time = t.date_time
+ WHERE r.id <= cur.id
+   AND r.action_status_reporting_officer = 1;

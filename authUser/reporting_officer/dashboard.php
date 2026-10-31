@@ -2,23 +2,25 @@
 require_once(__DIR__ . '/guard.php');
 require_once __DIR__ . '/../../config/db.php';
 
-// Total employees
-$employee_query = "SELECT COUNT(*) AS total_employees FROM employee";
-$employee_result = $conn->query($employee_query);
-$employee_data = $employee_result->fetch_assoc();
-$total_employees = $employee_data['total_employees'];
+$officer_id = (int)$_SESSION['id'];
 
-// Total assigned IPs
-$assigned_query = "SELECT COUNT(*) AS total_assigned FROM ip_request";
-$assigned_result = $conn->query($assigned_query);
-$assigned_data = $assigned_result->fetch_assoc();
-$total_assigned = $assigned_data['total_assigned'];
+// Employees reporting to this officer
+$stmt = $conn->prepare("SELECT COUNT(*) FROM employee WHERE reporting_officer_id = ?");
+$stmt->bind_param("i", $officer_id);
+$stmt->execute();
+$total_employees = $stmt->get_result()->fetch_row()[0];
 
-// Total available IPs
-$available_query = "SELECT COUNT(*) AS total_available FROM ip_transaction";
-$available_result = $conn->query($available_query);
-$available_data = $available_result->fetch_assoc();
-$total_available = $available_data['total_available'];
+// IP requests sent to this officer
+$stmt = $conn->prepare("SELECT COUNT(*) FROM ip_request WHERE reporting_officer_id = ?");
+$stmt->bind_param("i", $officer_id);
+$stmt->execute();
+$total_requests = $stmt->get_result()->fetch_row()[0];
+
+// IPs assigned against those requests
+$stmt = $conn->prepare("SELECT COUNT(*) FROM ip_transaction t JOIN ip_request r ON t.ip_request_id = r.id WHERE r.reporting_officer_id = ?");
+$stmt->bind_param("i", $officer_id);
+$stmt->execute();
+$total_assigned = $stmt->get_result()->fetch_row()[0];
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +113,7 @@ $total_available = $available_data['total_available'];
       <div class="card text-white bg-success h-100">
         <div class="card-body">
           <h5 class="card-title"><i class="fa-solid fa-network-wired"></i> IP Requests</h5>
-          <p class="card-text"><?= $total_assigned ?></p>
+          <p class="card-text"><?= $total_requests ?></p>
         </div>
       </div>
     </div>
@@ -121,7 +123,7 @@ $total_available = $available_data['total_available'];
       <div class="card text-white bg-warning h-100">
         <div class="card-body">
           <h5 class="card-title"><i class="fa-solid fa-globe"></i> IPs Assigned</h5>
-          <p class="card-text"><?= $total_available ?></p>
+          <p class="card-text"><?= $total_assigned ?></p>
         </div>
       </div>
     </div>

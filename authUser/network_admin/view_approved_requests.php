@@ -206,12 +206,13 @@ require_once __DIR__ . '/../../config/db.php';
 								}
 
 								$collapseId = "collapseDetails" . $row['ip_request_id'];
+								$ip = htmlspecialchars($row['ip_address']);
 
-								
+
 									echo "<tr>
 											<td>{$row['ip_request_id']}</td>
 											<td>{$row['emp_id']}</td>
-											<td>{$row['ip_address']}</td>
+											<td>{$ip}</td>
 											<td><span class='badge {$badgeClass}'>{$row['status']}</span></td>
 											<td><button class='btn btn-sm btn-primary' data-toggle='collapse' data-target='#{$collapseId}'>Details</button></td>
 										</tr>";
@@ -219,7 +220,7 @@ require_once __DIR__ . '/../../config/db.php';
 									echo "<tr class='collapse' id='{$collapseId}'>
 											<td colspan='5' class='p-3'>
 												<strong>More Info:</strong><br>
-												IP: {$row['ip_address']}<br>
+												IP: {$ip}<br>
 												Status: {$row['status']}<br>
 												Request ID: {$row['ip_request_id']}<br>
 												Device ID: {$row['device_id']}

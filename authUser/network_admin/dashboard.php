@@ -175,10 +175,11 @@ require_once __DIR__ . '/../../config/db.php';
 					<?php
 					$totalIPsQuery = "SELECT COUNT(*) as total FROM ip_request WHERE action_status_reporting_officer = 1";
 					$assignedIPsQuery = "SELECT COUNT(*) as assigned FROM ip_transaction";
+					$requestIPsQuery = "SELECT COUNT(*) as waiting FROM ip_request WHERE action_status_reporting_officer = 1 AND assigned_date_time IS NULL";
 
 					$totalIPs = $conn->query($totalIPsQuery)->fetch_assoc()['total'];
 					$assignedIPs = $conn->query($assignedIPsQuery)->fetch_assoc()['assigned'];
-					$requestIPs = $totalIPs - $assignedIPs;
+					$requestIPs = $conn->query($requestIPsQuery)->fetch_assoc()['waiting'];
 
 					?>
 

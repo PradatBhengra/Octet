@@ -9,6 +9,7 @@ $stmt = $conn->prepare("SELECT * FROM ip_request
 $stmt->bind_param("i", $reporting_officer_id);
 $stmt->execute();
 $result = $stmt->get_result();
+$randomtoken = issue_token();
 ?>
 
 <!DOCTYPE html>
@@ -120,6 +121,7 @@ $result = $stmt->get_result();
                             <form method="POST" action="submit_action.php" class="d-inline">
                                 <input type="hidden" name="request_id" value="<?= $row['id'] ?>">
                                 <input type="hidden" name="status" value="1"> <!-- 1 for Approved -->
+                                <input type="hidden" name="token" value="<?= $randomtoken ?>">
                                 <button type="submit" class="btn btn-success btn-sm">Approve</button>
                             </form>
 
@@ -131,7 +133,8 @@ $result = $stmt->get_result();
                                 <form method="POST" action="submit_action.php">
                                     <input type="hidden" name="request_id" value="<?= $row['id'] ?>">
                                     <input type="hidden" name="status" value="0"> <!-- 0 for Rejected -->
-                                    <textarea name="query_reporting_officer" class="form-control mb-2" rows="2" placeholder="Enter rejection remarks..." required></textarea>
+                                    <input type="hidden" name="token" value="<?= $randomtoken ?>">
+                                    <textarea name="query_reporting_officer" class="form-control mb-2" rows="2" maxlength="200" placeholder="Enter rejection remarks..." required></textarea>
                                     <button type="submit" class="btn btn-warning btn-sm">Submit Rejection</button>
                                 </form>
                             </div>
