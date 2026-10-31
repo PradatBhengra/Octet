@@ -1459,7 +1459,8 @@ function generateData() {
 	return data;
 }
 
-var ctx25 = document.getElementById('financialChart').getContext('2d');
+var canvas25 = document.getElementById('financialChart');
+var ctx25 = canvas25 ? canvas25.getContext('2d') : null;
 if(ctx25) {
 	ctx25.canvas.width = 1000;
 	ctx25.canvas.height = 600;

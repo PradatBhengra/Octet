@@ -3,24 +3,24 @@ require_once(__DIR__ . '/guard.php');
 require_once __DIR__ . '/../../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_check_emp'])) {
-	$request_id = $_POST['ajax_check_emp'];
+	$request_id = (int)$_POST['ajax_check_emp'];
 
-	// Step 1: Fetch emp_id and device_id from ip_request
-	$stmt = $conn->prepare("SELECT emp_id, device_id FROM ip_request WHERE id = ?");
+	// Step 1: Fetch emp_id and mac_address from ip_request
+	$stmt = $conn->prepare("SELECT emp_id, mac_address FROM ip_request WHERE id = ?");
 	$stmt->bind_param("i", $request_id);
 	$stmt->execute();
-	$stmt->bind_result($emp_id, $device_id);
+	$stmt->bind_result($emp_id, $mac_address);
 	$stmt->fetch();
 	$stmt->close();
 
-	// Step 2: Check if this emp_id and device_id combo already has a transaction
+	// Step 2: Same check as assign_form_handler.php: this employee's device (MAC) already has a transaction
 	$stmt2 = $conn->prepare("
-		SELECT ip_transaction.id 
-		FROM ip_transaction 
-		INNER JOIN ip_request ON ip_transaction.ip_request_id = ip_request.id 
-		WHERE ip_transaction.emp_id = ? AND ip_request.device_id = ?
+		SELECT ip_transaction.id
+		FROM ip_transaction
+		INNER JOIN ip_request ON ip_transaction.ip_request_id = ip_request.id
+		WHERE ip_transaction.emp_id = ? AND ip_request.mac_address = ?
 	");
-	$stmt2->bind_param("ii", $emp_id, $device_id);
+	$stmt2->bind_param("is", $emp_id, $mac_address);
 	$stmt2->execute();
 	$stmt2->store_result();
 
@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_check_emp'])) {
 	exit;
 }
 
+// Issued after the AJAX check above so that check doesn't replace the form's token
+$randomtoken = issue_token();
 ?>
 
 
@@ -213,8 +215,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_check_emp'])) {
                         WHEN action_status_reporting_officer = 0 THEN 'Rejected'
                         ELSE 'Pending'
                     END AS status
-                FROM 
+                FROM
                     ip_request
+                WHERE
+                    action_status_reporting_officer = 1 AND assigned_date_time IS NULL
             ";
 
 						$result = $conn->query($requests);
@@ -230,24 +234,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_check_emp'])) {
 								}
 
 								$collapseId = "collapseDetails" . $row['id'];
+								$mac = htmlspecialchars($row['mac_address'], ENT_QUOTES);
+								$ip = htmlspecialchars($row['ip_address'], ENT_QUOTES);
 
 								if ($row['status'] === 'Approved') {
 									echo "<tr>
                         <td>{$row['id']}</td>
 						<td>{$row['emp_id']}</td>
-                        <td>{$row['mac_address']}</td>
-                        <td>{$row['ip_address']}</td>
+                        <td>{$mac}</td>
+                        <td>{$ip}</td>
                         <td><span class='badge {$badgeClass}'>{$row['status']}</span></td>
                         <td><button class='btn btn-sm btn-primary' data-toggle='collapse' data-target='#{$collapseId}'>Details</button>
-						<button class='btn btn-sm btn-success assign-btn' data-id='{$row['id']}' data-mac='{$row['mac_address']}'>Assign</button>
+						<button class='btn btn-sm btn-success assign-btn' data-id='{$row['id']}' data-mac='{$mac}'>Assign</button>
 </td>
                     </tr>";
 
 					echo "<tr class='collapse' id='{$collapseId}'>
-							<td colspan='5' class='p-3'>
+							<td colspan='6' class='p-3'>
 							<strong>More Info:</strong><br>
-							IP: {$row['ip_address']}<br>
-							MAC: {$row['mac_address']}<br>
+							IP: {$ip}<br>
+							MAC: {$mac}<br>
 							Status: {$row['status']}<br>
 							Request ID: {$row['id']}
 							</td>
@@ -356,6 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_check_emp'])) {
 							</div>
 
 							<input type="hidden" name="request_id" id="modal-request-id">
+							<input type="hidden" name="token" value="<?= $randomtoken ?>">
 
 							<div class="mb-3">
 								<label for="ip_address" class="form-label">Assign IP</label>
@@ -408,13 +415,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_check_emp'])) {
 
 		<script>
 			let pendingRequestId = null;
+			let pendingMac = '';
 
 			// When Assign button is clicked
 			$(document).on('click', '.assign-btn', function () {
 				const requestId = $(this).data('id');
-				const macAddress = $(this).data('mac');
 
 				pendingRequestId = requestId;
+				pendingMac = $(this).data('mac');
 
 				$.ajax({
 					url: 'assign_ip.php',
@@ -452,6 +460,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_check_emp'])) {
 			function showAssignModal() {
 				const modal = $('#assignModal');
 				modal.find('#modal-request-id').val(pendingRequestId);
+				modal.find('#macAddress').val(pendingMac);
 				modal.modal('show');
 			}
 		</script>

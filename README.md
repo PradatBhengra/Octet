@@ -10,7 +10,7 @@ Three roles, one workflow:
 
 1. **Employee** logs in, fills in a device ID, MAC address and purpose, and submits an IP request. They can track the status of their requests and see the IPs assigned to their devices.
 2. **Reporting Officer** reviews pending requests from their employees and approves or rejects them, with remarks on rejection.
-3. **Network Admin** sees approved requests and assigns the actual network details: IP address, subnet mask, gateway and DNS. Every assignment is recorded as a transaction with who assigned it and when. Reassigning a device updates its existing transaction instead of duplicating it.
+3. **Network Admin** sees approved requests and assigns the actual network details: IP address, subnet mask, gateway and DNS. Every assignment is recorded as a transaction with who assigned it and when. Reassigning a device (same employee and MAC address) updates its existing transaction instead of duplicating it.
 
 Login uses a role selector, a captcha, and client side SHA-256 hashing with a per-session salt so the plain password never travels in the request. Sessions carry a token that is checked on every form submission, and all sign ins/outs are recorded in a login log.
 
@@ -60,7 +60,7 @@ Default XAMPP MySQL credentials (root, no password) are already set in `config/c
 
 ### Already have the original database?
 
-If you are running against the database from the internship rather than a fresh import, run `database/migration_fix_column_types.sql` once. It widens three columns that could not hold the values the app writes (an integer column that stored a datetime, another that stored an IP string, and the subnet mask), and creates the `login_log` table.
+If you are running against the database from the internship rather than a fresh import, run `database/migration_fix_column_types.sql` once. It widens three columns that could not hold the values the app writes (an integer column that stored a datetime, another that stored an IP string, and the subnet mask), creates the `login_log` table, and adds `ip_request.assigned_date_time`, filling it in for requests that already have an IP.
 
 ## Deploying to a live server
 
