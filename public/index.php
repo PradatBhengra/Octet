@@ -1,9 +1,6 @@
 <?php
-$randomtoken = md5(uniqid(rand(),true));
 require_once __DIR__ . '/../config/db.php';
 $randomtoken = issue_token();
-$csrf=rand(999,99999);
-$_SESSION['pkskey']=$csrf;
 ?>
 
 
@@ -27,18 +24,12 @@ $_SESSION['pkskey']=$csrf;
 	<script src="../assets/vendor/jquery/jquery.min.js"></script>
 	<script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script src="../assets/js/jquery.slicknav.min.js"></script>
-	<script src="../assets/js/sha256.js"></script>
 	<script src="../assets/js/popper.min.js"></script>
 	<script>
-	function encryptpwd(){
+	function checkpwd(){
 		var pwdpolicy = /^(?=.*\d)(?=.*[a-z])(?=.*[!@#$&_])(?=.*[A-Z]).{8,20}$/;
 		var pass= jQuery("#pwd").val();
 		if(pass.match(pwdpolicy)){
-			var x = sha256(pass);
-			var y= <?php echo $csrf; ?>;
-			var z= x+y;
-			var z1= sha256(z);
-			jQuery("#pwd").val(z1);
 			jQuery(".msg").text('');
 		} else {
 			var msg = "Password does not meet the policy requirements.";
@@ -304,14 +295,13 @@ function myFunction(x) {
 	            </div>
 	        	<div class="col-md-5 col-sm-12 footer-social d-flex align-items-center justify-content-md-end mb-4">
         			<div class="d-inline-block">
-	        			<span class="bg-white p-2 d-inline-block rounded mr-2"><img src="../assets/images/NIC.png" alt="NIC logo" height="30"></span>
 	        			<span class="bg-white p-2 d-inline-block rounded"><img src="../assets/images/digital-india.png" alt="digital india logo" height="30"></span>
 	        		</div>
 	            </div>
 	        </div>
             <hr class="border-secondary my-4">
 	        <div class="text-center small text-light-50">
-	        	Website Content Managed by <a class="text-white font-weight-bold" href="https://www.nic.in/">National Informatics Centre</a>, <a class="text-white font-weight-bold" href="https://meity.gov.in/">Ministry of Electronics and IT</a>, <a class="text-white font-weight-bold" href="https://www.india.gov.in/">Govt. of India.</a>
+	        	Designed and Developed by <span class="text-white font-weight-bold">Pradat Nelson Bhengra</span>
 	        </div>
 	    </footer>
 	</div>
@@ -331,7 +321,7 @@ function myFunction(x) {
 
             <!-- Modal body -->
             <div class="modal-body p-4 bg-light">
-                <form action="login-exec.php" method="post" id="loginForm">
+                <form action="login-exec.php" method="post" id="loginForm" onsubmit="return checkpwd();">
                     <div class="form-group mb-3">
                         <label for="login-UserType" class="small font-weight-bold text-muted">USER TYPE</label>
                         <select name="usertype" class="form-control form-control-lg border-0 shadow-sm" style="height: auto;" required>
@@ -371,7 +361,7 @@ function myFunction(x) {
                     <div class="text-center">
 					    <?php $_SESSION['token'] = $randomtoken; ?>
 					    <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>" required>
-                        <button type="submit" name="submit" class="btn btn-primary btn-block btn-lg shadow-sm b-btn submit font-weight-bold" onClick="encryptpwd();" style="border-radius: 50px;">Log In</button>
+                        <button type="submit" name="submit" class="btn btn-primary btn-block btn-lg shadow-sm b-btn submit font-weight-bold" style="border-radius: 50px;">Log In</button>
                     </div>
                 </form>
             </div>

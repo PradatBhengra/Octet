@@ -46,7 +46,7 @@ CREATE TABLE reporting_officer (
     location_id bigint(3) NOT NULL,
     mobile_no bigint(10) NOT NULL,
     email varchar(60) NOT NULL,
-    password varchar(100) NOT NULL COMMENT 'sha256 hash',
+    password varchar(255) NOT NULL COMMENT 'password_hash() output',
     doj date NOT NULL,
     dor date NOT NULL,
     dob date NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE network_admin (
     location_id bigint(3) NOT NULL,
     mobile_no bigint(10) NOT NULL,
     email varchar(60) NOT NULL,
-    password varchar(100) NOT NULL,
+    password varchar(255) NOT NULL,
     doj date NOT NULL,
     dor date NOT NULL,
     dob date NOT NULL,
@@ -83,13 +83,14 @@ CREATE TABLE employee (
     reporting_officer_id bigint(3) NOT NULL,
     mobile_no bigint(10) NOT NULL,
     email varchar(60) NOT NULL,
-    password varchar(100) NOT NULL,
+    password varchar(255) NOT NULL,
     doj date NOT NULL,
     dor date NOT NULL,
     dob date NOT NULL,
     created_date_time datetime NOT NULL,
     ip_address varchar(15) NOT NULL,
-    status int(1) NOT NULL DEFAULT 1
+    status int(1) NOT NULL DEFAULT 1,
+    CONSTRAINT fk_employee_officer FOREIGN KEY (reporting_officer_id) REFERENCES reporting_officer (id)
 ) ENGINE=InnoDB;
 
 -- ---------- workflow ----------
@@ -109,7 +110,10 @@ CREATE TABLE ip_request (
     ip_purpose varchar(200) NOT NULL,
     reporting_officer_date_time datetime NULL,
     reporting_officer_ip_address varchar(45) NULL,
-    assigned_date_time datetime NULL
+    assigned_date_time datetime NULL,
+    CONSTRAINT fk_request_employee FOREIGN KEY (emp_id) REFERENCES employee (id),
+    CONSTRAINT fk_request_officer FOREIGN KEY (reporting_officer_id) REFERENCES reporting_officer (id),
+    CONSTRAINT fk_request_device FOREIGN KEY (device_id) REFERENCES device_master (id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE ip_transaction (
@@ -124,7 +128,9 @@ CREATE TABLE ip_transaction (
     dns2 varchar(15) NOT NULL,
     date_time datetime NOT NULL,
     given_by_email varchar(60) NOT NULL,
-    used_unsed int(1) NOT NULL DEFAULT 1
+    used_unsed int(1) NOT NULL DEFAULT 1,
+    CONSTRAINT fk_transaction_request FOREIGN KEY (ip_request_id) REFERENCES ip_request (id),
+    CONSTRAINT fk_transaction_employee FOREIGN KEY (emp_id) REFERENCES employee (id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE login_log (
@@ -140,17 +146,17 @@ CREATE TABLE login_log (
 INSERT INTO state_master (id, state_name, status) VALUES (1, 'Jharkhand', 1);
 INSERT INTO district_master (id, district_name, state_id, status) VALUES (1, 'Ranchi', 1, 1);
 INSERT INTO location_master (id, office_name, office_address, office_contact, district_id, state_id, status)
-VALUES (1, 'NIC Jharkhand State Centre', 'Nepal House, Doranda, Ranchi', 6512490000, 1, 1, 1);
+VALUES (1, 'Head Office', 'Ranchi, Jharkhand', 6510000000, 1, 1, 1);
 
 INSERT INTO device_master (devie_name, status) VALUES
 ('Desktop', 1), ('Laptop', 1), ('Printer', 1), ('Server', 1), ('Router', 1), ('Switch', 1);
 
 -- Demo accounts, password Password@123
 INSERT INTO reporting_officer (id, emp_id, name, designation, location_id, mobile_no, email, password, doj, dor, dob, created_date_time, ip_address, status)
-VALUES (1, 200, 'Demo Officer', 'Director', 1, 9400000001, 'officer@nic.in', 'ff7bd97b1a7789ddd2775122fd6817f3173672da9f802ceec57f284325bf589f', '2023-01-02', '2035-01-01', '1980-05-10', NOW(), '127.0.0.1', 1);
+VALUES (1, 200, 'Demo Officer', 'Director', 1, 9400000001, 'officer@example.com', '$2y$10$JjYOAYfXXuBlM.Rf0AFMj.FcWP/qU8N/04RBXPdHvx2RZMkbFVbCq', '2023-01-02', '2035-01-01', '1980-05-10', NOW(), '127.0.0.1', 1);
 
 INSERT INTO network_admin (id, emp_id, name, designation, location_id, mobile_no, email, password, doj, dor, dob, created_date_time, ip_address, status)
-VALUES (1, 300, 'Demo Admin', 'Network Administrator', 1, 9400000002, 'admin@nic.in', 'ff7bd97b1a7789ddd2775122fd6817f3173672da9f802ceec57f284325bf589f', '2023-01-02', '2035-01-01', '1985-08-20', NOW(), '127.0.0.1', 1);
+VALUES (1, 300, 'Demo Admin', 'Network Administrator', 1, 9400000002, 'admin@example.com', '$2y$10$iT/YyUxEGtwNE/CZL9WywuhkvqYVo5oTQ2qR1DVkuDqRjbs2G7.Ce', '2023-01-02', '2035-01-01', '1985-08-20', NOW(), '127.0.0.1', 1);
 
 INSERT INTO employee (id, emp_id, name, designation, location_id, reporting_officer_id, mobile_no, email, password, doj, dor, dob, created_date_time, ip_address, status)
-VALUES (1, 100, 'Demo Employee', 'Scientist B', 1, 1, 9400000003, 'employee@nic.in', 'ff7bd97b1a7789ddd2775122fd6817f3173672da9f802ceec57f284325bf589f', '2023-01-02', '2035-01-01', '1995-03-15', NOW(), '127.0.0.1', 1);
+VALUES (1, 100, 'Demo Employee', 'Scientist B', 1, 1, 9400000003, 'employee@example.com', '$2y$10$/mkc9DJ6m.u1P1x7Npnk/Ou/1ROX.z1yfxov0gx7Yrhb8Zo9Vw6QO', '2023-01-02', '2035-01-01', '1995-03-15', NOW(), '127.0.0.1', 1);

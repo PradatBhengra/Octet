@@ -14,7 +14,7 @@ if (isset($_SESSION['form_errors'])) {
 }
 ?>
 
-<form action="request_ip_exec.php" method="POST" class="nic-form">
+<form action="request_ip_exec.php" method="POST" class="site-form">
   <label>Device:
     <select name="device_id" required>
       <option value="">-- select a device --</option>
@@ -28,7 +28,7 @@ if (isset($_SESSION['form_errors'])) {
   </label>
   <label>MAC Address: <input type="text" name="mac_address" required></label>
   <label>Requested IP (optional): <input type="text" name="ip_address_of_employee"></label>
-  <label>Purpose: <textarea name="ip_purpose" required></textarea></label>
+  <label>Purpose: <textarea name="ip_purpose" maxlength="200" required></textarea></label>
   <!--<button name="submit_request">Submit Request</button>-->
   <input type="submit" name="submit_request" value="Submit Request">
 

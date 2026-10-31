@@ -64,11 +64,11 @@ include 'header.php';
 </style>
 
 <section class="dashboard">
-  <h2>👨‍💼 Welcome, <?= $_SESSION['employee_name'] ?? 'Employee'; ?></h2>
+  <h2>👨‍💼 Welcome, <?= htmlspecialchars($_SESSION['employee_name'] ?? 'Employee'); ?></h2>
   <?php
-if (isset($_SESSION['form_errors'])) {
-    echo '<div style="color:red;">' . $_SESSION['form_errors'] . '</div>';
-    unset($_SESSION['form_errors']); // clear after showing
+if (isset($_SESSION['form_success'])) {
+    echo '<div style="color:green;">' . $_SESSION['form_success'] . '</div>';
+    unset($_SESSION['form_success']); // clear after showing
 }
 ?>
 
