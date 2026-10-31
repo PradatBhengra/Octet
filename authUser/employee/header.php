@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NIC Jharkhand - Employee Portal</title>
+  <title>IP Management System - Employee Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
   
@@ -23,7 +23,7 @@
       height: 100vh; /* Full screen layout */
     }
 
-    .nic-header {
+    .site-header {
       background-color: #003366;
       color: white;
       border-bottom: 6px solid #ff9933;
@@ -31,7 +31,7 @@
       box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .nic-header .container {
+    .site-header .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
@@ -41,15 +41,11 @@
       flex-wrap: wrap;
     }
 
-    .nic-logo {
-      height: 60px;
-    }
-
     .jh-emblem {
       height: 60px;
     }
 
-    .nic-header h1 {
+    .site-header h1 {
       flex: 1;
       text-align: center;
       font-size: 22px;
@@ -97,13 +93,13 @@
     }
 
     @media (max-width: 768px) {
-      .nic-header .container {
+      .site-header .container {
         flex-direction: column;
         align-items: center;
         text-align: center;
       }
 
-      .nic-header h1 {
+      .site-header h1 {
         font-size: 18px;
         margin-top: 10px;
       }
@@ -112,10 +108,9 @@
 </head>
 <body>
 <div class="wrapper">
-  <header class="nic-header">
+  <header class="site-header">
     <div class="container">
-      <img src="https://www.presentations.gov.in/wp-content/uploads/2020/06/nic-logo-nic-logo-1-bilingual-white-1-01.jpg" class="nic-logo" alt="NIC Logo">
-      <h1>NIC Jharkhand - IP Management System</h1>
+      <h1>IP Management System</h1>
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF_77pox1wMORrigecBHkLE9yrfQSWNo-JBA&s" class="jh-emblem" alt="Jharkhand Emblem">
       <div class="lang-access">
         <a href="#">हिन्दी</a> | <a href="#">English</a>

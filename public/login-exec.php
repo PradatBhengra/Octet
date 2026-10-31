@@ -13,6 +13,10 @@ if (isset($_POST['submit'])) {
 	$captcha_input = $_POST['captcha_input'];
 	$usertype = (int)$_POST['usertype']; // Cast to int for safety
 
+	// Each captcha image is good for one attempt only
+	$captcha = $_SESSION['captcha'] ?? null;
+	unset($_SESSION['captcha']);
+
 	$_SESSION['username'] = $username;
 
 	if ($username == '' || $password == '' || $captcha_input == '') {
@@ -21,7 +25,7 @@ if (isset($_POST['submit'])) {
 		exit;
 	}
 
-	if (!isset($_SESSION['captcha']) || $captcha_input != $_SESSION['captcha']) {
+	if ($captcha === null || $captcha_input != $captcha) {
 		$_SESSION['msg'] = '<div class="alert alert-warning">INCORRECT CAPTCHA</div>';
 		echo '<script> window.location = "index.php"; </script>'; // Fixed redirect to index.php (login modal is there)
 		exit;
@@ -58,16 +62,24 @@ if (isset($_POST['submit'])) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $dpassword = $row['password'];
-        $dpassword1 = $dpassword . $_SESSION['pkskey'];
-        $dpassword2 = hash('sha256', $dpassword1);
+        $valid = password_verify($password, $row['password']);
 
-        if ($dpassword2 == $password) {
+        // Accounts made before password_hash() still hold an unsalted SHA-256 hash:
+        // accept it this once and replace it with a proper hash
+        if (!$valid && hash_equals($row['password'], hash('sha256', $password))) {
+            $valid = true;
+            $new_hash = password_hash($password, PASSWORD_DEFAULT);
+            $rehash_stmt = $conn->prepare("UPDATE `$table` SET password = ? WHERE id = ?");
+            $rehash_stmt->bind_param("si", $new_hash, $row['id']);
+            $rehash_stmt->execute();
+            $rehash_stmt->close();
+        }
+
+        if ($valid) {
+            // New session id on login so a pre-set session cookie can't be reused
+            session_regenerate_id(true);
             $_SESSION['id'] = $row['id'];
-            $_SESSION['trk'] = "123432456987567893465346463463464678568678942423535663744848";
-            $_SESSION['pro_signin_token'] = $password;
-            $_SESSION['pro_signin_token_user'] = $username;
-            $_SESSION['login-email'] = $username; 
+            $_SESSION['login-email'] = $username;
 
             $sign_in = date("Y-m-d H:i:s");
 
@@ -87,6 +99,7 @@ if (isset($_POST['submit'])) {
             if ($usertype == 3) {
                 $_SESSION['emp_id'] = $row['id'];
                 $_SESSION['reporting_officer_id'] = $row['reporting_officer_id'] ?? null;
+                $_SESSION['employee_name'] = $row['name'];
             }
 
             // Open a login_log entry; logout.php closes it

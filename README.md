@@ -1,6 +1,6 @@
 # IP Management System
 
-A centralized system for requesting, approving and assigning IP addresses inside an organization. Built during my internship at National Informatics Centre (NIC), Ranchi, to replace the manual process of tracking IP and MAC allocations.
+A centralized system for requesting, approving and assigning IP addresses inside an organization. Built during my internship to replace the manual process of tracking IP and MAC allocations.
 
 **Stack:** PHP, MySQL, Apache (XAMPP), Bootstrap, jQuery
 
@@ -12,7 +12,7 @@ Three roles, one workflow:
 2. **Reporting Officer** reviews pending requests from their employees and approves or rejects them, with remarks on rejection.
 3. **Network Admin** sees approved requests and assigns the actual network details: IP address, subnet mask, gateway and DNS. Every assignment is recorded as a transaction with who assigned it and when. Reassigning a device (same employee and MAC address) updates its existing transaction instead of duplicating it.
 
-Login uses a role selector, a captcha, and client side SHA-256 hashing with a per-session salt so the plain password never travels in the request. Sessions carry a token that is checked on every form submission, and all sign ins/outs are recorded in a login log.
+Login uses a role selector and a captcha. Passwords are stored with PHP's `password_hash()` and checked with `password_verify()`, so a copy of the database doesn't give away anyone's password; serve the site over HTTPS so the password is also encrypted on its way to the server. Sessions carry a token that is checked on every form submission, and all sign ins/outs are recorded in a login log.
 
 ## Project structure
 
@@ -50,9 +50,9 @@ Demo logins (password for all three: `Password@123`):
 
 | Role | Email |
 |---|---|
-| Employee | employee@nic.in |
-| Reporting Officer | officer@nic.in |
-| Network Admin | admin@nic.in |
+| Employee | employee@example.com |
+| Reporting Officer | officer@example.com |
+| Network Admin | admin@example.com |
 
 Passwords must satisfy the policy the login page enforces: at least 8 characters with an uppercase letter, a lowercase letter, a digit and one of `!@#$&_`.
 
@@ -60,7 +60,7 @@ Default XAMPP MySQL credentials (root, no password) are already set in `config/c
 
 ### Already have the original database?
 
-If you are running against the database from the internship rather than a fresh import, run `database/migration_fix_column_types.sql` once. It widens three columns that could not hold the values the app writes (an integer column that stored a datetime, another that stored an IP string, and the subnet mask), creates the `login_log` table, and adds `ip_request.assigned_date_time`, filling it in for requests that already have an IP.
+If you are running against the database from the internship rather than a fresh import, run `database/migration_fix_column_types.sql` once. It widens three columns that could not hold the values the app writes (an integer column that stored a datetime, another that stored an IP string, and the subnet mask), creates the `login_log` table, adds `ip_request.assigned_date_time` (filled in for requests that already have an IP), widens the password columns for `password_hash()`, turns purposes that were saved HTML-escaped (`R&amp;D`) back into plain text, and adds the foreign keys. Existing SHA-256 passwords keep working and are upgraded at each user's next login.
 
 ## Deploying to a live server
 
@@ -70,13 +70,14 @@ Any host with Apache, PHP 8+ and MySQL works. The general steps:
 2. Upload the project files to the web root (or a subdirectory).
 3. Set the DB credentials, either as environment variables (`DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`) or by editing `config/config.php`.
 4. Make sure `.htaccess` is respected (`AllowOverride All` in the Apache vhost) so `config/` and `database/` stay unreachable from the browser.
-5. Delete the demo users and create real ones with your own emails. Passwords are stored as SHA-256 hashes; generate one with `php -r "echo hash('sha256', 'yourpassword');"`.
+5. Delete the demo users and create real ones with your own emails. Passwords are stored with `password_hash()`; generate one with `php -r "echo password_hash('yourpassword', PASSWORD_DEFAULT);"`.
+6. Serve the site over HTTPS, since the login form sends the password to the server.
 
 For a quick free option, an always-free PHP host or a small VPS with a LAMP stack both work; the app has no dependencies beyond PHP's mysqli and GD (for the captcha), both of which ship with standard PHP installs.
 
 ## Database
 
-Six tables: one per role (`employee`, `reporting_officer`, `network_admin`), `ip_request` for the request workflow, `ip_transaction` for actual assignments, and `login_log` for the sign in audit trail. Foreign keys link employees to their reporting officer and every transaction back to its request.
+Six tables: one per role (`employee`, `reporting_officer`, `network_admin`), `ip_request` for the request workflow, `ip_transaction` for actual assignments, and `login_log` for the sign in audit trail. Foreign keys link employees to their reporting officer, every request to its employee, officer and device, and every transaction back to its request and employee.
 
 ## Cleanup changelog
 

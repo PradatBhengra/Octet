@@ -1,6 +1,6 @@
 <?php
 session_start();
-$code = rand(100000, 999999);
+$code = random_int(100000, 999999);
 $_SESSION['captcha'] = $code;
 header('Content-type: image/png');
 $image = imagecreate(70, 30);

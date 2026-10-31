@@ -43,3 +43,28 @@ UPDATE ip_request r
    SET r.assigned_date_time = t.date_time
  WHERE r.id <= cur.id
    AND r.action_status_reporting_officer = 1;
+
+-- Passwords are now stored with password_hash(), which needs more room.
+-- Existing SHA-256 hashes keep working and are replaced at each user's next login.
+ALTER TABLE reporting_officer MODIFY password VARCHAR(255) NOT NULL;
+ALTER TABLE network_admin MODIFY password VARCHAR(255) NOT NULL;
+ALTER TABLE employee MODIFY password VARCHAR(255) NOT NULL;
+
+-- Purposes used to be saved HTML-escaped (R&D was stored as R&amp;D).
+-- New requests are saved as typed, so turn the old ones back.
+-- &amp; goes last so text that was typed as "&lt;" stays "&lt;".
+UPDATE ip_request
+   SET ip_purpose = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(ip_purpose,
+       '&lt;', '<'), '&gt;', '>'), '&quot;', '"'), '&#039;', ''''), '&amp;', '&');
+
+-- Foreign keys. If one fails, a row points at something that doesn't exist or the
+-- two columns have different types: fix that, then run the failed statement again.
+ALTER TABLE employee
+  ADD CONSTRAINT fk_employee_officer FOREIGN KEY (reporting_officer_id) REFERENCES reporting_officer (id);
+ALTER TABLE ip_request
+  ADD CONSTRAINT fk_request_employee FOREIGN KEY (emp_id) REFERENCES employee (id),
+  ADD CONSTRAINT fk_request_officer FOREIGN KEY (reporting_officer_id) REFERENCES reporting_officer (id),
+  ADD CONSTRAINT fk_request_device FOREIGN KEY (device_id) REFERENCES device_master (id);
+ALTER TABLE ip_transaction
+  ADD CONSTRAINT fk_transaction_request FOREIGN KEY (ip_request_id) REFERENCES ip_request (id),
+  ADD CONSTRAINT fk_transaction_employee FOREIGN KEY (emp_id) REFERENCES employee (id);

@@ -44,7 +44,7 @@ $total_assigned = $stmt->get_result()->fetch_row()[0];
     <div class="container">
         <div class="row align-items-center">
             <figure class="col-lg-6 mb-0">
-                <img src="../../assets/images/NIC.png" alt="NIC Logo" style="height: 50px;">
+                <span class="fs-4 fw-bold">IP Management System</span>
             </figure>
             <!-- <div class="col-lg-6 d-flex justify-content-end gap-3">
                 <button class="btn"><i class="fa-solid fa-user"></i></button>

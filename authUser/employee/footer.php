@@ -1,15 +1,14 @@
 </main>
 
-<footer class="nic-footer">
+<footer class="site-footer">
   <div class="footer-container">
     <div class="footer-logo-section">
-      <img src="https://www.presentations.gov.in/wp-content/uploads/2020/06/nic-logo-nic-logo-1-bilingual-white-1-01.jpg" alt="NIC Logo" class="footer-nic-logo">
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF_77pox1wMORrigecBHkLE9yrfQSWNo-JBA&s" alt="Jharkhand Emblem" class="footer-jh-logo">
     </div>
 
     <div class="footer-text">
-      <p>&copy; <?= date('Y') ?> <strong>NIC Jharkhand</strong>. All Rights Reserved.</p>
-      <p>Designed and Developed by <strong>National Informatics Centre, Jharkhand</strong></p>
+      <p>&copy; <?= date('Y') ?> <strong>IP Management System</strong>. All Rights Reserved.</p>
+      <p>Designed and Developed by <strong>Pradat Nelson Bhengra</strong></p>
     </div>
   </div>
 </footer>
@@ -17,7 +16,7 @@
 </div> <!-- End of .wrapper from header.php -->
 
 <style>
-.nic-footer {
+.site-footer {
   background-color: #003366;
   color: #ffffff;
   padding: 25px 0;
@@ -42,7 +41,6 @@
   margin-bottom: 15px;
 }
 
-.footer-nic-logo,
 .footer-jh-logo {
   height: 50px;
 }
